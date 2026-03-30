@@ -61,4 +61,37 @@ else:
 
 #Call for information from the coin 
 st.subheader(f"{selectedCrypto} Info:")
+urlInfo = f"https://api.coinpaprika.com/v1/coins/{ticker}"
+coinInfo = requests.get(urlInfo).json()
 
+#Basic Information
+st.write("Name:", coinInfo["name"])
+st.write("Symbol:", coinInfo["symbol"])
+st.write("Rank:", coinInfo["rank"])
+st.write("Type:", coinInfo["type"])
+
+#Description - IF applicable
+if coinInfo.get("description"):
+    st.write(coinInfo["description"])
+
+# Events
+st.subheader(f"{selectedCrypto} Events:")
+
+urlEvents = f"https://api.coinpaprika.com/v1/coins/{ticker}/events"
+coinEvents = requests.get(urlEvents).json()
+
+if isinstance(coinEvents, list) and len(coinEvents) > 0:
+    for event in coinEvents:
+        with st.container():
+            st.markdown(f"### {event['name']}")
+            st.write(f"📅 Date: {event['date']}")
+            
+            if event.get("description"):
+                st.write(event["description"])
+            
+            if event.get("link"):
+                st.markdown(f"[More Info]({event['link']})")
+            
+            st.divider()
+else:
+    st.info("No events available for this coin.")
