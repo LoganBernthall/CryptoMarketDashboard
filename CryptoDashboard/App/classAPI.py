@@ -12,6 +12,14 @@ class Api:
 
         return price
     
+    def candlestickChart(tickerCode):
+        #Get coin candlestick when ticker code parsed
+        url = f"https://api.coinpaprika.com/v1/coins/{tickerCode}/ohlcv/latest"
+        response = requests.get(url)
+        chartData = response.json()
+        
+        return chartData
+
     def historicalPrice(tickerCode):
         #Get historical prices when ticker code is parsed - ATTENTION THIS IS THE FREE API, 7 DAY DELAY TO VALUES  
         endTime = datetime.datetime.utcnow()

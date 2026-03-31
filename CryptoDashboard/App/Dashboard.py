@@ -1,7 +1,9 @@
 #Crypto Dashboard webapp
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
 
+from datetime import datetime
 #Importing API class
 from App.classAPI import Api
 
@@ -29,8 +31,31 @@ ticker = cryptoMap[selectedCrypto]
 st.subheader("Price:")
 st.metric(label=selectedCrypto, value=f"${Api.currentPrice(ticker):,.2f}")
 
+#Call candle sitck function
+candleStickChart = Api.candlestickChart(ticker)
+
+#Parsing to DF
+csDF = pd.DataFrame(candleStickChart)
+
+csDF["time_open"] = pd.to_datetime(csDF["time_open"])
+
 #Call historical price function
 historicalPrice = Api.historicalPrice(ticker)
+
+csFig = go.Figure(data=[go.Candlestick(
+    x=csDF["time_open"],
+    open=csDF["open"],
+    high=csDF["high"],
+    low=csDF["low"],
+    close=csDF["close"]
+)])
+
+csFig.update_layout(
+    title=f"{selectedCrypto} Candlestick Chart",
+    xaxis_rangeslider_visible=False
+)
+
+st.plotly_chart(csFig)
 
 # Parse into df and format if possible
 HistoricalDF = pd.DataFrame()  # empty df by default
