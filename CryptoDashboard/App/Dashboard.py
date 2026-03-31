@@ -1,8 +1,9 @@
 #Crypto Dashboard webapp
-import datetime
 import streamlit as st
-import requests
 import pandas as pd
+
+#Importing API class
+from App.classAPI import Api
 
 #Titles
 st.title("Crypto Market Dashboard")
@@ -25,28 +26,11 @@ selectedCrypto = st.selectbox("Choose a cryptocurrency", list(cryptoMap.keys()))
 # Get API ticker
 ticker = cryptoMap[selectedCrypto]
 
-# Call API for current price
-url = f"https://api.coinpaprika.com/v1/tickers/{ticker}"
-response = requests.get(url)
-price = response.json()["quotes"]["USD"]["price"]
 st.subheader("Price:")
-st.metric(label=selectedCrypto, value=f"${price:,.2f}")
+st.metric(label=selectedCrypto, value=f"${Api.currentPrice(ticker):,.2f}")
 
-## Call API for historical
-endTime = datetime.datetime.utcnow()
-startTime = endTime - datetime.timedelta(days=7)  # last 7 days
-
-#Formatting of time
-start_str = startTime.strftime("%Y-%m-%dT%H:%M:%SZ")
-end_str = endTime.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-urlHistorical = f"https://api.coinpaprika.com/v1/tickers/{ticker}/historical?start={start_str}&end={end_str}&quote=usd&interval=1d"
-responseHistorical = requests.get(urlHistorical)
-
-historicalPrice = responseHistorical.json()
-
-#Debug for html response commented out
-#st.write(responseHistorical.text)
+#Call historical price function
+historicalPrice = Api.historicalPrice(ticker)
 
 # Parse into df and format if possible
 HistoricalDF = pd.DataFrame()  # empty df by default
@@ -61,8 +45,9 @@ else:
 
 #Call for information from the coin 
 st.subheader(f"{selectedCrypto} Info:")
-urlInfo = f"https://api.coinpaprika.com/v1/coins/{ticker}"
-coinInfo = requests.get(urlInfo).json()
+
+#Call API for information
+coinInfo = Api.coinInformation(ticker)
 
 #Basic Information
 st.write("Name:", coinInfo["name"])
@@ -77,8 +62,8 @@ if coinInfo.get("description"):
 # Events
 st.subheader(f"{selectedCrypto} Events:")
 
-urlEvents = f"https://api.coinpaprika.com/v1/coins/{ticker}/events"
-coinEvents = requests.get(urlEvents).json()
+#Call API for events
+coinEvents = Api.coinEvents(ticker)
 
 if isinstance(coinEvents, list) and len(coinEvents) > 0:
     for event in coinEvents:
