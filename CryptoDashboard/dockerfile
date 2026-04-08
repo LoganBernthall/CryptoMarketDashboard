@@ -15,4 +15,4 @@ EXPOSE 8501
 
 #Run App
 
-CMD ["streamlit", "run", "CryptoDashboard/App/Dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "App/Dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
