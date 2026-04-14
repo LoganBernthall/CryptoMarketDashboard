@@ -19,7 +19,8 @@ cryptoMap = {
     "Solana": "sol-solana",
     "BNB": "bnb-binance-coin",
     "Cardano": "ada-cardano",
-    "DogeCoin": "doge-dogecoin"
+    "DogeCoin": "doge-dogecoin",
+    "Shiba": "shib-shiba-inu"
 }
 
 #User select crypro from list
